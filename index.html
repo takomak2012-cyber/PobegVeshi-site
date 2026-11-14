@@ -62,6 +62,18 @@ header .logo-ribbon{
 .btn:hover{transform:translateY(-2px)}
 .btn-dl{background:linear-gradient(180deg,#ffc85e,var(--accent));color:#3a2400;box-shadow:0 8px 22px rgba(255,171,46,.35)}
 .btn-store{background:rgba(255,255,255,.08);color:var(--text);border:1px solid rgba(255,255,255,.25)}
+.btn-dev{background:linear-gradient(180deg,#9b8bff,#6a55e6);color:#fff;box-shadow:0 8px 22px rgba(123,92,255,.35)}
+/* Кнопка «Все игры» — закреплена вверху справа, видна на всей странице */
+.dev-pill{
+  position:fixed;top:14px;right:14px;z-index:50;
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 16px;border-radius:999px;font-size:14px;font-weight:700;
+  background:linear-gradient(180deg,#9b8bff,#6a55e6);color:#fff;text-decoration:none;
+  border:1px solid rgba(255,255,255,.28);box-shadow:0 8px 22px rgba(0,0,0,.45);
+  transition:transform .15s,box-shadow .15s;
+}
+.dev-pill:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.55)}
+@media(max-width:520px){.dev-pill{top:8px;right:8px;padding:8px 12px;font-size:12.5px}}
 .hint{margin-top:12px;color:var(--muted);font-size:13px}
 
 /* ---------- sections ---------- */
@@ -102,6 +114,7 @@ footer a{color:var(--muted)}
 </head>
 <body>
 <div class="bg-veil"></div>
+<a class="dev-pill" href="https://takomak2012-cyber.github.io/" target="_blank" rel="noopener" title="Все игры и приложения разработчика">🎮 Все игры</a>
 
 <header>
   <div class="wrap">
@@ -110,10 +123,11 @@ footer a{color:var(--muted)}
     <p class="tagline">Ритмовый раннер про <b>бег по самым обычным предметам</b></p>
     <p class="lead">Вместо земли под ногами — подушки, стаканы, обувь и мебель. Каждая вещь нарисована как настоящая, лежит под своим наклоном и имеет свою высоту. Прыгай, лови ритм и доберись до финиша.</p>
     <div class="cta">
-      <a class="btn btn-dl" href="PobegVeshi_v1.64.apk" download>⬇ Скачать APK — 21 МБ</a>
+      <a class="btn btn-dl" href="PobegVeshi_v1.65.apk" download>⬇ Скачать APK — 21 МБ</a>
       <a class="btn btn-store" href="https://www.rustore.ru/catalog/app/ru.pobegveshi.game" target="_blank" rel="noopener">RuStore</a>
+      <a class="btn btn-dev" href="https://takomak2012-cyber.github.io/" target="_blank" rel="noopener">🎮 Другие игры</a>
     </div>
-    <p class="hint">Android 7.0+ · версия 1.64 · бесплатная</p>
+    <p class="hint">Android 7.0+ · версия 1.65 · бесплатная</p>
   </div>
 </header>
 
@@ -175,8 +189,9 @@ footer a{color:var(--muted)}
       <h2>Скачай <span>Побег Вещи</span></h2>
       <p>APK весит около 21 МБ, работает офлайн, прогресс сохраняется автоматически. Реклама — между уровнями; поощрительная — только по вашему желанию.</p>
       <div class="cta">
-        <a class="btn btn-dl" href="PobegVeshi_v1.64.apk" download>⬇ Скачать APK — 21 МБ</a>
+        <a class="btn btn-dl" href="PobegVeshi_v1.65.apk" download>⬇ Скачать APK — 21 МБ</a>
         <a class="btn btn-store" href="https://www.rustore.ru/catalog/app/ru.pobegveshi.game" target="_blank" rel="noopener">Страница в RuStore</a>
+        <a class="btn btn-dev" href="https://takomak2012-cyber.github.io/" target="_blank" rel="noopener">🎮 Другие игры</a>
       </div>
     </div>
   </div>
@@ -184,9 +199,9 @@ footer a{color:var(--muted)}
 
 <footer>
   <div class="wrap">
-    <div class="ver">Версия 1.64</div>
+    <div class="ver">версия 1.65</div>
     <p>«Побег Вещи» — ритмовый раннер для Android.<br>
-    Разработчик: takomak2012-cyber. Сайт: <a href="app-ads.txt">app-ads.txt</a></p>
+    Разработчик: <a href="https://takomak2012-cyber.github.io/" target="_blank" rel="noopener">takomak2012-cyber</a> · <a href="app-ads.txt">app-ads.txt</a></p>
   </div>
 </footer>
 
