@@ -3,6 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+/* Новогоднее оформление включается само с 1 декабря по 14 января.
+   Для предпросмотра в любой день: ?ny=1 */
+(function () {
+  var d = new Date(), m = d.getMonth(), day = d.getDate();
+  var on = m === 11 || (m === 0 && day <= 14) || /[?&]ny=1/.test(location.search);
+  if (on) document.documentElement.className += ' ny';
+})();
+</script>
 <title>Побег Вещи — ритмовый раннер про бег по предметам</title>
 <meta name="description" content="Побег Вещи — ритмовый раннер на Android: 76 уровней, 7 миров, 5 боссов, 29 скинов и новогодний сезон из 10 уровней. Прыгай, лови ритм, собирай монеты.">
 <link rel="icon" type="image/png" href="img/favicon.png">
@@ -121,16 +130,44 @@ h2 span{color:var(--accent)}
 footer{padding:36px 0 46px;text-align:center;color:var(--muted);font-size:14px}
 footer a{color:var(--muted)}
 .ver{display:inline-block;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:20px;padding:3px 14px;font-size:13px;margin-bottom:12px}
+
+/* ---------- новогоднее оформление (1 декабря — 14 января) ---------- */
+.ny-snow{position:fixed;inset:0;z-index:40;pointer-events:none;display:none}
+.ny-garland{position:fixed;left:0;right:0;top:0;height:46px;z-index:45;pointer-events:none;display:none}
+.ny-garland svg{position:absolute;inset:0;width:100%;height:100%}
+.ny-garland .bulb{position:absolute;display:block;width:9px;height:9px;margin:-4px 0 0 -4px;border-radius:50%;
+  box-shadow:0 0 10px 2px currentColor,0 0 22px 6px rgba(255,255,255,.12);
+  animation:nyBlink 2.6s ease-in-out infinite}
+@keyframes nyBlink{0%,100%{opacity:.45;filter:brightness(.8)}50%{opacity:1;filter:brightness(1.5)}}
+.ny-tree{position:absolute;left:max(16px,calc(50% - 820px));top:54px;width:230px;height:auto;display:none;pointer-events:none;filter:drop-shadow(0 10px 24px rgba(0,0,0,.45))}
+.ny-hero-badge{display:none;align-items:center;gap:8px;margin:0 auto 16px;padding:6px 18px;border-radius:999px;
+  background:linear-gradient(180deg,#2f9a52,#1b6b3a);border:2px solid rgba(255,255,255,.24);
+  font-size:14px;font-weight:800;letter-spacing:.03em;color:#fff;box-shadow:0 8px 20px rgba(0,0,0,.35)}
+header{position:relative}
+html.ny .ny-snow,html.ny .ny-garland{display:block}
+html.ny .ny-hero-badge{display:inline-flex}
+html.ny .bg-veil{background:radial-gradient(ellipse at 50% -8%,rgba(90,220,140,.18),transparent 55%),linear-gradient(180deg,rgba(24,44,34,.84),rgba(27,19,64,.94))}
+html.ny header{padding-top:64px}
+@media(min-width:1560px){html.ny .ny-tree{display:block}}
+@media(max-width:600px){.ny-garland{height:38px}}
+@media(prefers-reduced-motion:reduce){.ny-garland .bulb{animation:none;opacity:.9}}
 </style>
 </head>
 <body>
 <div class="bg-veil"></div>
+<canvas class="ny-snow" id="ny-snow" aria-hidden="true"></canvas>
+<div class="ny-garland" aria-hidden="true">
+  <svg viewBox="0 0 1000 46" preserveAspectRatio="none"><path d="M0,2 Q500,46 1000,2" fill="none" stroke="rgba(220,235,255,.30)" stroke-width="1.6"/></svg>
+  <div id="ny-bulbs"></div>
+</div>
 <a class="dev-pill" href="https://takomak2012-cyber.github.io/" target="_blank" rel="noopener" title="Все игры и приложения разработчика">Ещё от разработчика</a>
 
 <header>
+  <canvas class="ny-tree" id="ny-tree" width="240" height="320" aria-hidden="true"></canvas>
   <div class="wrap">
     <h1 class="logo-title">Побег&nbsp;Вещи</h1>
     <div class="logo-ribbon">ПРЫГАЙ • ЛОВИ РИТМ • ПОБЕЖДАЙ</div>
+    <div class="ny-hero-badge" id="ny-hero-badge">🎄 Новогодний сезон</div>
     <p class="tagline">Ритмовый раннер про <b>бег по самым обычным предметам</b></p>
     <p class="lead">Вместо земли под ногами — подушки, стаканы, обувь и мебель. Каждая вещь нарисована как настоящая, лежит под своим наклоном и имеет свою высоту. Прыгай, лови ритм и доберись до финиша.</p>
     <div class="cta">
@@ -233,5 +270,151 @@ footer a{color:var(--muted)}
   </div>
 </footer>
 
+<script>
+/* Новогодние эффекты: снег, гирлянда, ёлка и подпись в шапке. */
+(function () {
+  if (!document.documentElement.classList.contains('ny')) return;
+  var rm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- снег ---- */
+  var cv = document.getElementById('ny-snow'), c = cv && cv.getContext('2d');
+  var W = 0, H = 0, dpr = Math.min(2, window.devicePixelRatio || 1), flakes = [];
+  function fitSnow() {
+    W = window.innerWidth; H = window.innerHeight;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  if (c) {
+    fitSnow();
+    for (var i = 0; i < 64; i++) flakes.push({ x: Math.random() * W, y: Math.random() * H, r: 1 + Math.random() * 2.2, sp: 10 + Math.random() * 26, ph: Math.random() * 6.28, dr: 5 + Math.random() * 12 });
+    window.addEventListener('resize', fitSnow);
+    var lastS = 0;
+    function snow(now) {
+      if (!rm) requestAnimationFrame(snow);
+      if (now - lastS < 33 && now) return;
+      lastS = now || 0;
+      var t = (now || 0) / 1000;
+      c.clearRect(0, 0, W, H);
+      c.fillStyle = '#fff';
+      for (var k = 0; k < flakes.length; k++) {
+        var f = flakes[k];
+        if (!rm) { f.y += f.sp / 30; if (f.y > H + 6) { f.y = -6; f.x = Math.random() * W; } }
+        c.globalAlpha = 0.28 + 0.42 * (0.5 + 0.5 * Math.sin(t * 1.6 + f.ph));
+        c.beginPath(); c.arc(f.x + Math.sin(t * 0.7 + f.ph) * f.dr, f.y, f.r, 0, 6.2832); c.fill();
+      }
+      c.globalAlpha = 1;
+    }
+    if (rm) snow(0); else requestAnimationFrame(snow);
+  }
+
+  /* ---- гирлянда ---- */
+  var bulbs = document.getElementById('ny-bulbs');
+  if (bulbs) {
+    var COL = ['#ff4d4d', '#ffd34a', '#7fffa0', '#6fc8ff', '#ff8ae0', '#ffa64d', '#b48cff'], N = 30;
+    for (var b = 0; b < N; b++) {
+      var u = b / (N - 1), el = document.createElement('i');
+      el.className = 'bulb';
+      el.style.left = (u * 100) + '%';
+      el.style.top = (2 + Math.sin(u * Math.PI) * 20) + 'px';
+      el.style.color = COL[b % COL.length];
+      el.style.background = COL[b % COL.length];
+      el.style.animationDelay = (-b * 0.13) + 's';
+      bulbs.appendChild(el);
+    }
+  }
+
+  /* ---- ёлка ---- */
+  var tc = document.getElementById('ny-tree');
+  function starPath(g, x, y, R, n) {
+    g.beginPath();
+    for (var i = 0; i < n * 2; i++) {
+      var a = -Math.PI / 2 + i * Math.PI / n, rr = i % 2 ? R * 0.45 : R;
+      var px = x + Math.cos(a) * rr, py = y + Math.sin(a) * rr;
+      if (i) g.lineTo(px, py); else g.moveTo(px, py);
+    }
+    g.closePath(); g.fill();
+  }
+  function drawTree(g, t) {
+    var w = 240, h = 320, cx = w / 2, by = h - 12, s = (h * 0.88) / 300;
+    g.clearRect(0, 0, w, h);
+    g.save();
+    g.translate(cx, by);
+    g.scale(s, s);
+    g.rotate(Math.sin(t * 0.62) * 0.018 + Math.sin(t * 1.57) * 0.006);
+    g.fillStyle = '#4a2f1c'; g.fillRect(-7, -34, 14, 36);
+    var T = [[-2, 120, 84], [-54, 104, 78], [-100, 86, 72], [-142, 66, 60]];
+    var G = ['#1e7a44', '#238a4b', '#2a9a53', '#31a95b'];
+    for (var i = 0; i < T.length; i++) {
+      var y = T[i][0], ww = T[i][1], hh = T[i][2];
+      g.fillStyle = G[i];
+      g.beginPath(); g.moveTo(0, y - hh); g.lineTo(ww / 2, y);
+      g.quadraticCurveTo(0, y + 6, -ww / 2, y); g.closePath(); g.fill();
+      g.fillStyle = 'rgba(0,0,0,.12)';
+      g.beginPath(); g.moveTo(0, y - hh); g.lineTo(ww / 2, y); g.lineTo(0, y - 4); g.closePath(); g.fill();
+      g.strokeStyle = 'rgba(20,80,45,.75)'; g.lineWidth = 1;
+      for (var k = 0; k < 7; k++) {
+        var uu = k / 6, yy = y - hh * (1 - uu) * 0.92, xx = ww * 0.5 * (1 - uu * 0.9);
+        g.beginPath(); g.moveTo(xx, yy); g.lineTo(xx + 4, yy + 5); g.stroke();
+        g.beginPath(); g.moveTo(-xx, yy); g.lineTo(-xx - 4, yy + 5); g.stroke();
+      }
+    }
+    var N2 = 34, C2 = ['#ff4d4d', '#ffd34a', '#7fffa0', '#6fc8ff', '#ff8ae0'];
+    for (var j = 0; j < N2; j++) {
+      var u = j / (N2 - 1), yy2 = -10 - u * 250, rr = 58 * (1 - u) + 3, a = u * Math.PI * 5.2 + 0.6, x = Math.sin(a) * rr * 0.94;
+      var col = C2[j % C2.length], br = 0.3 + 0.7 * Math.pow(0.5 + 0.5 * Math.sin(t * 2.6 + j * 1.37), 2);
+      g.globalAlpha = 0.22 * br; g.fillStyle = col; g.beginPath(); g.arc(x, yy2, 7, 0, 6.2832); g.fill();
+      g.globalAlpha = 0.4 + 0.6 * br; g.beginPath(); g.arc(x, yy2, 2.2, 0, 6.2832); g.fill();
+      g.globalAlpha = 1;
+    }
+    var O = [[-46, -30, 7, 0], [34, -52, 6, 1], [-30, -92, 6, 2], [20, -120, 5, 3], [-4, -160, 4.5, -1]];
+    var BC = ['#e23b3b', '#ffcf4a', '#4a9fe2', '#b45ae2'];
+    for (var o = 0; o < O.length; o++) {
+      var ox = O[o][0], oy = O[o][1], r = O[o][2], sw = Math.sin(t * 1.45 + o * 1.2) * 0.13, len = 6 + r;
+      var px = ox + Math.sin(sw) * len, py = oy + Math.cos(sw) * len;
+      g.strokeStyle = 'rgba(255,240,200,.35)'; g.lineWidth = 1;
+      g.beginPath(); g.moveTo(ox, oy); g.lineTo(px, py); g.stroke();
+      if (O[o][3] < 0) { g.fillStyle = '#ffd34a'; starPath(g, px, py, r * 1.2, 5); }
+      else {
+        var bg = g.createRadialGradient(px - r * 0.35, py - r * 0.4, r * 0.1, px, py, r);
+        bg.addColorStop(0, '#fff'); bg.addColorStop(0.62, BC[O[o][3]]); bg.addColorStop(1, '#2a0a0a');
+        g.fillStyle = bg; g.beginPath(); g.arc(px, py, r, 0, 6.2832); g.fill();
+      }
+    }
+    var pulse = 1 + 0.09 * Math.sin(t * 2.4);
+    g.translate(0, -268); g.scale(pulse, pulse);
+    g.fillStyle = 'rgba(255,220,90,.22)'; g.beginPath(); g.arc(0, 0, 20, 0, 6.2832); g.fill();
+    g.fillStyle = '#ffd34a'; starPath(g, 0, 0, 10, 5);
+    g.fillStyle = 'rgba(255,255,255,.85)'; starPath(g, 0, 0, 5, 5);
+    g.restore();
+  }
+  if (tc) {
+    var tx = tc.getContext('2d'), td = Math.min(2, window.devicePixelRatio || 1);
+    tc.width = 240 * td; tc.height = 320 * td;
+    var lastT = 0;
+    function tree(now) {
+      if (!rm) requestAnimationFrame(tree);
+      if (!rm && now - lastT < 33) return;
+      lastT = now || 0;
+      if (!tc.offsetWidth) return;
+      tx.setTransform(td, 0, 0, td, 0, 0);
+      drawTree(tx, (now || 0) / 1000);
+    }
+    if (rm) tree(0); else requestAnimationFrame(tree);
+  }
+
+  /* ---- подпись в шапке ---- */
+  var bd = document.getElementById('ny-hero-badge');
+  if (bd) {
+    var d = new Date();
+    if (d.getMonth() === 0) bd.textContent = '🎄 С Новым годом! Сезон до 14 января';
+    else {
+      var days = Math.ceil((new Date(d.getFullYear() + 1, 0, 1) - d) / 86400000);
+      var a = days % 10, b2 = days % 100;
+      var word = (a === 1 && b2 !== 11) ? 'день' : (a >= 2 && a <= 4 && (b2 < 10 || b2 >= 20)) ? 'дня' : 'дней';
+      bd.textContent = '🎄 Новогодний сезон · до Нового года ' + days + ' ' + word;
+    }
+  }
+})();
+</script>
 </body>
 </html>
