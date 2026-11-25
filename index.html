@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Побег Вещи — ритмовый раннер про бег по предметам</title>
-<meta name="description" content="Побег Вещи — ритмовый раннер на Android: 76 уровней, 7 миров, 5 боссов, 29 скинов. Прыгай, лови ритм, собирай монеты.">
+<meta name="description" content="Побег Вещи — ритмовый раннер на Android: 76 уровней, 7 миров, 5 боссов, 29 скинов и новогодний сезон из 10 уровней. Прыгай, лови ритм, собирай монеты.">
 <link rel="icon" type="image/png" href="img/favicon.png">
 <meta property="og:title" content="Побег Вещи — ритмовый раннер">
 <meta property="og:description" content="76 уровней, 7 миров, 5 боссов. Беги по подушкам и посуде, лови ритм и побеждай.">
@@ -107,6 +107,17 @@ h2 span{color:var(--accent)}
 .panel{background:var(--panel);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:28px;text-align:center}
 .panel p{color:var(--muted);max-width:640px;margin:0 auto 20px}
 
+/* ---------- новогодний сезон ---------- */
+.ny-panel{position:relative;overflow:hidden;text-align:left}
+.ny-panel::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(120,220,160,.16),transparent 62%);pointer-events:none}
+.ny-badge{position:relative;display:inline-block;background:linear-gradient(180deg,#2f9a52,#1e7a44);border:2px solid rgba(255,255,255,.22);border-radius:999px;padding:5px 16px;font-size:13px;font-weight:800;letter-spacing:.04em;color:#fff;margin-bottom:14px}
+.ny-panel h2{text-align:left;margin-bottom:10px}
+.ny-panel .ny-lead{max-width:none;margin:0 0 18px}
+.ny-panel .cards{position:relative}
+.ny-panel .card{text-align:left;background:rgba(255,255,255,.05)}
+.ny-panel .card .num{font-size:24px}
+.ny-panel .hint{position:relative;margin-top:14px}
+
 footer{padding:36px 0 46px;text-align:center;color:var(--muted);font-size:14px}
 footer a{color:var(--muted)}
 .ver{display:inline-block;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:20px;padding:3px 14px;font-size:13px;margin-bottom:12px}
@@ -147,6 +158,23 @@ footer a{color:var(--muted)}
       <div class="stat"><b>×8</b><span>максимальное комбо</span></div>
       <div class="stat"><b>3</b><span>типа уровней: бег, плавание, башня</span></div>
       <div class="stat"><b>Тап</b><span>управление одним пальцем</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="ny">
+  <div class="wrap">
+    <div class="panel ny-panel">
+      <div class="ny-badge">Сезонное событие · 1 декабря — 14 января</div>
+      <h2>Новогодний <span>сезон</span></h2>
+      <p class="ny-lead">Зимой открывается отдельный мир «Новогодняя ночь»: 10 праздничных уровней со льдом, гирляндами и подарками. Прогресс события отдельный и не мешает основной игре.</p>
+      <div class="cards">
+        <div class="card"><div class="num">10</div><h3>уровней</h3><p>«Новогодняя ночь» — сезонный мир с собственным прогрессом и наградами.</p></div>
+        <div class="card"><div class="num">4</div><h3>скина</h3><p>Дед Мороз, Снеговик, Ёлочка и Подарок — открываются за монеты на время сезона.</p></div>
+        <div class="card"><div class="num">+1000</div><h3>монет за весь мир</h3><p>Плюс по 100 монет за первое прохождение каждого новогоднего уровня.</p></div>
+        <div class="card"><div class="num">🎄</div><h3>живая ёлка</h3><p>В меню — большая ёлка с мигающими гирляндами, качающимися игрушками и флажками 20 стран.</p></div>
+      </div>
+      <p class="hint">Событие включается автоматически с 1 декабря по 14 января.</p>
     </div>
   </div>
 </section>
